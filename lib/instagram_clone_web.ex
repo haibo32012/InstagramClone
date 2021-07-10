@@ -62,6 +62,13 @@ defmodule InstagramCloneWeb do
           _any -> {:noreply, socket}
         end
       end
+
+      @impl true
+      def handle_params(_unsigned_params, uri, socket) do
+        {:noreply,
+          socket
+          |> assign(current_uri_path: URI.parse(uri).path)}
+      end
     end
   end
 
