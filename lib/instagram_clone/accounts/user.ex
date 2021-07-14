@@ -1,6 +1,7 @@
 defmodule InstagramClone.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias InstagramClone.Accounts.Follows
 
   @derive {Inspect, except: [:password]}
   schema "users" do
@@ -13,6 +14,10 @@ defmodule InstagramClone.Accounts.User do
     field :avatar_url, :string, default: "/images/default-avatar.png"
     field :bio, :string
     field :website, :string
+    field :followers_count, :integer, default: 0
+    field :following_count, :integer, default: 0
+    has_many :following, Follows, foreign_key: :follower_id
+    has_many :followers, Follows, foreign_key: :followed_id
 
     timestamps()
   end
@@ -152,4 +157,6 @@ defmodule InstagramClone.Accounts.User do
       add_error(changeset, :current_password, "is not valid")
     end
   end
+
+  
 end
