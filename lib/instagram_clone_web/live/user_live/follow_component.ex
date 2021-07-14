@@ -30,6 +30,7 @@ defmodule InstagramCloneWeb.UserLive.FollowComponent do
         """
     end
 
+    @impl true
     def handle_event("toggle-status", _params, socket) do
         current_user = socket.assigns.current_user
         user = socket.assigns.user

@@ -1,8 +1,8 @@
 <%= if @current_user do %>
-  <%= live_component @socket, InstagramCloneWeb.HeaderNavComponent, current_user: @current_user %>
+  <%= live_component @socket, InstagramCloneWeb.HeaderNavComponent, id: 1, current_user: @current_user %>
 <% else %>
-  <%= if @current_uri_path !== "/" do %>
-    <%= live_component @socket, InstagramCloneWeb.HeaderNavComponent, current_user: @current_user %>
+  <%= if @live_action !== :root_path do %>
+    <%= live_component @socket, InstagramCloneWeb.HeaderNavComponent, id: 1, current_user: @current_user %>
   <% end %>
 <% end %>
 
@@ -16,4 +16,5 @@
     phx-value-key="error"><%= live_flash(@flash, :error) %></p>
 
   <%= @inner_content %>
+
 </main>
