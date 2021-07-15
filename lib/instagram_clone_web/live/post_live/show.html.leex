@@ -1,6 +1,8 @@
 <section class="flex">
+    <!---Post Image section---->
     <%= img_tag @post.photo_url,
         class: "w-3/5 object-contain h-full" %>
+    <!-- End post image section --->
 
     <div class="w-2/5 border-2 h-full">
         <div class="flex p-4 items-center border-b-2">
@@ -34,6 +36,24 @@
                     </div>
                 </div>
             <% end %>
+
+            <section id="comments" phx-update="<%= @comments_section_update %>">
+                <%= for comment <- @comments do %>
+                    <%= live_component @socket,
+                        InstagramCloneWeb.PostLive.CommentComponent,
+                        id: comment.id,
+                        current_user: @current_user,
+                        comment: comment %>
+                <% end %>
+            </section>
+
+            <button
+                class="w-full <%= @load_more_comments_btn %> justify-center pt-2 focus:outline-none"
+                phx-click="load-more-comments">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </button>
         </div>
 
         <div class="w-full border-t-2">
@@ -74,18 +94,52 @@
             <button class="px-5 text-xs text-gray-500 font-bold focus:outline-none"><%= @post.total_likes %> likes</button>
             <h6 class="px-5 text-xs text-gray-400"><%= Timex.format!(@post.inserted_at, "{Mfull} {D}, {YYYY}") %></h6>
 
-            <div class="p-2 flex items_center mt-3 border-t-2 border-gray-100">
-                <div class="w-full">
-                    <textarea
-                        aria-label="Add a comment..."
-                        placeholder="Add a comment..."
-                        class="w-full border-0 focus:ring-transparent resize-none"
-                        autocomplete="off"
-                        autocorrect="off"
-                        rows="1"></textarea>
-                </div>
-                <div><button class="text-light-blue-500 font-bold pb-2 text-sm">Post</button></div>
-            </div>
+            
+            <%= if @current_user do %>
+                <%= f = form_for @changeset, "#",
+                    phx_submit: "save",
+                    class: "p-2 flex items-center mt-3 border-t-2 border-gray-100",
+                    x_data: "{
+                        disableSubmit: true,
+                        inputText: null,
+                        displayCommentBtn: (refs) => {
+                            refs.cbtn.classList.remove('cursor-not-allowed')
+                        },
+                        disableCommentBtn: (refs) => {
+                            refs.cbtn.classList.add('opacity-30')
+                            refs.cbtn.classList.add('cursor-not-allowed')
+                        }
+                    }" %>
+                    <div class="w-full">
+                        <%= textarea f, :body,
+                            class: "w-full border-0 focus:ring-transparent resize-none",
+                            rows: 1,
+                            placeholder: "Add a comment...",
+                            aria_label: "Add a comment...",
+                            autocorrect: "off",
+                            autocomplete: "off",
+                            x_model: "inputText",
+                            "@input": "[
+                                (inputText.length != 0) ? [disableSubmit = false, displayCommentBtn($refs)] : [disableSubmit = true, disableCommentBtn($refs)]
+                            ]"%>
+                    </div>
+                    <div>
+                        <%= submit "Post",
+                            phx_disable_with: "Posting...",
+                            class: "text-light-blue-500 opacity-30 cursor-not-allowed font-bold pb-2 text-sm focus:outline-none",
+                            x_ref: "cbtn",
+                            "@click": "inputText = null",
+                            "x_bind:disabled": "disableSubmit" %>
+                    </div>
+                </form>
+                <% else %>
+                    <div class="p-4 flex items-center mt-3 border-t-2 border-gray-100">
+                        <%= link "Log in to comment",
+                            to: Routes.user_session_path(@socket, :new),
+                            class: "text-light-blue-600" %>
+                    </div>
+            <% end %>
+            
         </div>
     </div>
 </section>
