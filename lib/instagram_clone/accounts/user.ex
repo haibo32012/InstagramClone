@@ -20,6 +20,7 @@ defmodule InstagramClone.Accounts.User do
     has_many :following, Follows, foreign_key: :follower_id
     has_many :followers, Follows, foreign_key: :followed_id
     has_many :posts, InstagramClone.Posts.Post
+    has_many :likes, InstagramClone.Likes.Like
 
     timestamps()
   end

@@ -8,6 +8,7 @@ defmodule InstagramClone.Posts.Post do
     field :total_comments, :integer, default: 0
     field :total_likes, :integer, default: 0
     field :url_id, :string
+    has_many :likes, InstagramClone.Likes.Like, foreign_key: :liked_id
     belongs_to :user, InstagramClone.Accounts.User
 
     timestamps()
