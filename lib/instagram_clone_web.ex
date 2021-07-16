@@ -63,6 +63,36 @@ defmodule InstagramCloneWeb do
           _any -> {:noreply, socket}
         end
       end
+
+      @impl true
+      def handle_info({InstagramCloneWeb.HeaderNavComponent, :search_users_event, search}, socket) do
+        case Accounts.search_users(search) do
+          [] -> 
+            send_update(InstagramCloneWeb.HeaderNavComponent,
+              id: 1,
+              searched_users: [],
+              users_not_found?: true,
+              while_searching_users?: false
+            )
+
+            {:noreply, socket}
+          
+          users -> 
+            send_update(InstagramCloneWeb.HeaderNavComponent,
+              id: 1,
+              searched_users: users,
+              users_not_found?: false,
+              while_searching_users?: false,
+              overflow_y_scroll_ul: check_search_result(users)
+            )
+
+            {:noreply, socket}
+        end
+      end
+
+      defp check_search_result(users) do
+        if length(users) > 6, do: "overflow-y-scroll", else: ""
+      end
     end
   end
 
