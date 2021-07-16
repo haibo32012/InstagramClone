@@ -7,6 +7,7 @@ defmodule InstagramClone.Comments do
   alias InstagramClone.Repo
 
   alias InstagramClone.Comments.Comment
+  alias InstagramClone.Likes.Like
 
   
   
@@ -15,13 +16,14 @@ defmodule InstagramClone.Comments do
     post_id = assigns.post.id
     per_page = assigns.per_page
     page = assigns.page
+    likes_query = Like |> select([l], l.user_id)
 
     Comment
     |> where(post_id: ^post_id)
     |> get_post_comments_sorting(public, user)
     |> limit(^per_page)
     |> offset(^((page - 1) * per_page))
-    |> preload([:user, :likes])
+    |> preload([:user, likes: ^likes_query])
     |> Repo.all
   end
 
@@ -34,8 +36,10 @@ defmodule InstagramClone.Comments do
   end
 
   def get_comment!(id) do
+    likes_query = Like |> select([l], l.user_id)
+
     Repo.get!(Comment, id)
-    |> Repo.preload([:user, :likes])
+    |> Repo.preload([:user, likes: likes_query])
   end
 
   def create_comment(user, post, attrs \\ %{}) do
@@ -52,7 +56,8 @@ defmodule InstagramClone.Comments do
     |> Repo.transaction()
     |> case do
       {:ok, %{comment: comment}} ->
-        comment |> Repo.preload(:likes)
+        likes_query = Like |> select([l], l.user_id)
+        comment |> Repo.preload(likes: likes_query)
       end
   end
 

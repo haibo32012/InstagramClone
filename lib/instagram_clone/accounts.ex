@@ -424,4 +424,22 @@ defmodule InstagramClone.Accounts do
     user = user |> Repo.preload(:followers)
     user.followers |> Repo.preload(:follower)
   end
+
+  def get_following_list(user) do
+    Follows
+    |> select([f], f.followed_id)
+    |> where(follower_id: ^user.id)
+    |> Repo.all()
+  end
+
+  def random_5(user) do
+    following_list = get_following_list(user)
+
+    User
+    |> where([u], u.id not in ^following_list)
+    |> where([u], u.id != ^user.id)
+    |> order_by(desc: fragment("Random()"))
+    |> limit(5)
+    |> Repo.all()
+  end
 end

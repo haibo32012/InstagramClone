@@ -4,7 +4,7 @@ defmodule InstagramCloneWeb.PostLive.Show do
 
     alias InstagramClone.Posts
     alias InstagramClone.Uploaders.Avatar
-    alias InstagramCloneWeb.PostLive.LikeComponent
+    alias InstagramCloneWeb.Live.LikeComponent
     alias InstagramClone.Comments
     alias InstagramClone.Comments.Comment
 

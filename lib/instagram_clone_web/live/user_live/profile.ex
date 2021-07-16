@@ -33,7 +33,7 @@ defmodule InstagramCloneWeb.UserLive.Profile do
     end
 
     @impl true
-    def handle_event("laod-more-profile-posts", _, socket) do
+    def handle_event("load-more-profile-posts", _, socket) do
         {:noreply, socket |> load_posts}
     end
 
