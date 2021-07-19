@@ -42,13 +42,26 @@ defmodule InstagramCloneWeb.PostLive.New do
             {:ok, %{post: post}} ->
                 PostUploader.save(socket)
 
+                send_msg(post)
+
                 {:noreply,
                     socket
                     |> put_flash(:info, "Post created successfully")
                     |> push_redirect(to: Routes.user_profile_path(socket, :index, socket.assigns.current_user.username))}
 
-            {:error, %Ecto.Changeset{} = changeset} ->
+            {:error, :post, %Ecto.Changeset{} = changeset, %{}} ->
                 {:noreply, assign(socket, changeset: changeset)}
         end
+    end
+
+    defp send_msg(post) do
+        InstagramCloneWeb.Endpoint.broadcast_from(
+            self(),
+            Posts.pubsub_topic,
+            "new_post",
+            %{
+                post: post
+            }
+        )
     end
 end

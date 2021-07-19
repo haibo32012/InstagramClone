@@ -76,15 +76,21 @@
 
 <section class="border-t-2 mt-5">
     <ul class="flex justify-center text-center space-x-20">
-        <li class="pt-4 px-1 text-sm text-gray-600 border-t-2 border-black -mt-0.5">
-            POSTS
-        </li>
+        <%= live_redirect to: Routes.user_profile_path(@socket, :index, @user.username) do %>
+            <li class="pt-4 px-1 text-sm <%= @selected_index %>">
+                POSTS
+            </li>
+        <% end %>
         <li class="pt-4 px-1 text-sm text-gray-400">
             IGTV
         </li>
-        <li class="pt-4 px-1 text-sm text-gray-400">
-            SAVED
-        </li>
+        <%= if @my_saved? do %>
+            <%= live_redirect to: Routes.user_profile_path(@socket, :saved, @user.username) do %>
+                <li class="pt-4 px-1 text-sm <%= @selected_saved %>">
+                    SAVED
+                </li>
+            <% end %>
+        <% end %>
         <li class="pt-4 px-1 text-sm text-gray-400">
             TAGGED
         </li>

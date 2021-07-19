@@ -11,6 +11,7 @@ defmodule InstagramClone.Posts.Post do
     has_many :likes, InstagramClone.Likes.Like, foreign_key: :liked_id
     belongs_to :user, InstagramClone.Accounts.User
     has_many :comments, InstagramClone.Comments.Comment
+    has_many :posts_bookmarks, InstagramClone.Posts.Bookmarks
 
     timestamps()
   end
